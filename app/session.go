@@ -3,12 +3,15 @@ package app
 
 //Session carries the state parameters of a particular user
 type Session struct{
-	GetTickerChan chan chan float64
+	worker *Worker
+	GetTickerChan chan apiData
+	GetBalanceChan chan apiData
 }
 
 //NewSession returns a new instance of *Session 
 func NewSession () *Session{
 	return &Session{
-		GetTickerChan: make(chan chan float64), //channel to communicate with getTicker goroutine
+		GetTickerChan: make(chan apiData), //channel to communicate with getTicker goroutine
+		GetBalanceChan: make(chan apiData),
 	}
 }

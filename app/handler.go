@@ -28,7 +28,7 @@ func NewAppHandler (s *Session) *AppHandler{
 
 
 //AppHandler implements ServeHTTP method making it a Handler
-func (h AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.mux.ServeHTTP(w, r)
 }
 
@@ -41,6 +41,8 @@ func (h *AppHandler)indexHandler(w http.ResponseWriter, r *http.Request) {
 
 //getTickerHandler presents the ticker price to the user
 func (h *AppHandler)getTickerHandler(w http.ResponseWriter, r *http.Request){
+	var host = "mock"
+	h.session.SetWorker(host)
 	tickerChan := make(chan float64) //tickerChan represents a channel that returns the ticker price
 	h.session.GetTickerChan <- apiData{h.session.worker, tickerChan} //Send the content(ticker price) in tickerChan to session
 	ticker := <- tickerChan //ticker receives the ticker price via tickerChan
@@ -49,11 +51,11 @@ func (h *AppHandler)getTickerHandler(w http.ResponseWriter, r *http.Request){
 	return 
 }
 
-//getTickerHandler presents the ticker price to the user
+//getBalanceHandler presents the account balance to the user
 func (h *AppHandler)getBalanceHandler(w http.ResponseWriter, r *http.Request){
-	balanceChan := make(chan float64) //balanceChan represents a channel that returns the balance price
-	h.session.GetBalanceChan <- apiData{h.session.worker, balanceChan} //Send the content(balance price) in balanceChan to session
-	balance := <- balanceChan //balance receives the balance price via balanceChan
+	balanceChan := make(chan float64) //balanceChan represents a channel that returns the balance
+	h.session.GetBalanceChan <- apiData{h.session.worker, balanceChan} //Send the content(balance) in balanceChan to session
+	balance := <- balanceChan //balance receives the account balance via balanceChan
 	responseToUser := fmt.Sprintf("<h1>balance: %.8f<h1>", balance) //Returns response to user (which contains balance) as a string
 	fmt.Fprintf(w, "%s", responseToUser) //Prints response to user on the web page
 	return 

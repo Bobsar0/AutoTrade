@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/chi" //Using chi mux/router
 	"net/http"
 	"fmt"
+	
 )
 
 //Type AppHandler contains the chi mux and session and implements the ServeMux method
@@ -15,8 +16,8 @@ type AppHandler struct{
 
 
 //NewAppHandler returns a new instance of *AppHandler
-func NewAppHandler (s *Session) *AppHandler{
-	h := &AppHandler{
+func NewAppHandler (s *Session) AppHandler{
+	h := AppHandler{
 		mux: chi.NewRouter(),
 		session: s,
 	}
@@ -28,7 +29,7 @@ func NewAppHandler (s *Session) *AppHandler{
 
 
 //AppHandler implements ServeHTTP method making it a Handler
-func (h *AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.mux.ServeHTTP(w, r)
 }
 

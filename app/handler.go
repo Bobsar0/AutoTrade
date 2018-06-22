@@ -4,7 +4,16 @@ package app
 import (
 	"github.com/go-chi/chi" //Using chi mux/router
 	"net/http"
-	"fmt"
+	"github.com/bobsar0/AutoTrade/webClient"
+	"log"
+)
+
+
+var (
+	indexTmpl = webClient.NewAppTemplate("index.gohtml")
+	tickerTmpl = webClient.NewAppTemplate("getticker.gohtml")
+	balanceTmpl = webClient.NewAppTemplate("getbalance.gohtml")
+	placeorderTmpl = webClient.NewAppTemplate("placeorder.gohtml")
 )
 
 //AppHandler contains the chi mux and session and implements the http.ServeMux method, thus making it a handler
@@ -12,7 +21,6 @@ type AppHandler struct{
 	mux *chi.Mux
 	session *Session
 }
-
 
 //NewAppHandler returns a new instance of *AppHandler
 func NewAppHandler (s *Session) *AppHandler{
@@ -36,11 +44,9 @@ func (h *AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 //indexHandler delivers the Home page to the user
 func (h *AppHandler)indexHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, `<h1>Welcome to AutoTrade<h1>
-		<p><a href="/ticker">ticker</a></p>
-		<p><a href="/balance">balance</a></p>
-		<p><a href="/placeorder">Place Order</a></p>`) //Prints to webpage
-
+	if err := indexTmpl.Execute(w,r,nil); err!=nil{
+		log.Fatalln(err)
+	}
 }
 
 //getTickerHandler presents the ticker price to the user
@@ -50,9 +56,9 @@ func (h *AppHandler)getTickerHandler(w http.ResponseWriter, r *http.Request){
 	tickerChan := make(chan interface{}) //tickerChan represents a channel that returns the ticker price
 	h.session.GetTickerChan <- apiData{h.session.worker, tickerChan} //Send the content(ticker price) in tickerChan to retrieved from GetTicker(chan apiData) to user session
 	ticker := <- tickerChan //ticker receives the ticker price via tickerChan
-	responseToUser := fmt.Sprintf("<h1>Ticker: %.8f<h1>", ticker) //Returns response to user (which contains ticker) as a string
-	fmt.Fprintf(w, "%s", responseToUser) //Prints response to user on the web page
-	return 
+	if err := tickerTmpl.Execute(w, r, ticker); err!=nil{ //Execute template passing in 'balance' as data to the template
+		log.Fatalln(err)
+	}
 }
 
 //getBalanceHandler presents the account balance to the user
@@ -60,18 +66,20 @@ func (h *AppHandler)getBalanceHandler(w http.ResponseWriter, r *http.Request){
 	balanceChan := make(chan interface{}) //balanceChan represents a channel that returns the balance
 	h.session.GetBalanceChan <- apiData{h.session.worker, balanceChan} //Send the content(balance) in balanceChan retrieved from GetBalance(chan apiData) to user session
 	balance := <- balanceChan //balance receives the account balance via balanceChan
-	responseToUser := fmt.Sprintf("<h1>balance: %.8f<h1>", balance) //Returns response to user (which contains balance) as a string
-	fmt.Fprintf(w, "%s", responseToUser) //Prints response to user on the web page
+	if err := balanceTmpl.Execute(w, r, balance); err!=nil{
+		log.Fatalln(err)
+	}
 	return 
 }
 
-//getBalanceHandler presents output of placeOrder to the user
+//placeOrderHandler presents output of placeOrder to the user
 func (h *AppHandler)placeOrderHandler(w http.ResponseWriter, r *http.Request){
 	placeOrderChan := make(chan interface{}) //balanceChan represents a channel that returns the balance
 	h.session.PlaceOrderChan <- apiData{h.session.worker, placeOrderChan} //Send the content(balance) in balanceChan to session
 	orderOutput := <- placeOrderChan //orderOutput receives the output of PlaceOrder() via placeOrderChan
-	responseToUser := fmt.Sprintf(`<h1>Order Successful!</h1>
-								<p>Order output:  %v </p>`, orderOutput) //Returns response to user (which contains placeOrder output) as a string
-	fmt.Fprintf(w, "%s", responseToUser) //Prints response to user on the web page
+	if err := placeorderTmpl.Execute(w, r, orderOutput); err!=nil{
+		log.Fatalln(err)
+	}
 	return 
 }
+

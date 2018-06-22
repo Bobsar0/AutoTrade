@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Automatic Cryptocurrency Trading bot ">
+    <meta name="authors" content="Steve Onyeneke; Chidi Iwuanyanwu">
+
+    <title>AutoTrade</title>
+</head>
+<body style="background-color: goldenrod">
+    <header>
+            <div>
+                <div>
+                    <h1><a href="index.gohtml">AutoTrade</a></h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="/ticker">GetTicker</a></li>
+                        <li><a href="/balance">GetBalance</a></li>
+                        <li><a href="/orderform">PlaceOrder</a></li>
+                    </ul>
+                </nav>
+            </div>
+    </header>
+   
+    {{template "body" .Data}} <!--Pass in a new template as body to form a new base which will be rendered to user as the new template requested -->
+</body>
+</html>
+
+
+
+       

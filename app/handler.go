@@ -36,7 +36,7 @@ func NewAppHandler (s *Session) AppHandler{
 
 
 //AppHandler implements ServeHTTP method making it a Handler
-func (h AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h AppHandler)ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.mux.ServeHTTP(w, r)
 }
 

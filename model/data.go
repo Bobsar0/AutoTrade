@@ -14,6 +14,8 @@ type Transaction struct{
 type TransactionService interface{
 	FuncThatReturnTicker() float64 
 	FuncThatReturnBalance()float64
+	AddTransaction(Transaction) (TransactionID, error)
+	GetTransaction(TransactionID) (Transaction, error)
 }
 
 type UserID string
@@ -33,4 +35,26 @@ type UserService interface{
 	UpdateUser(*User) error
 	ListUsers() ([]*User, error) 
 	DeleteUser (UserID) error 
+}
+
+type DbData struct{
+	TransID TransactionID
+	Transaction Transaction
+	CallerChan chan DbResp
+}
+
+type DbResp struct{
+	TransID TransactionID
+	Transaction Transaction
+	Err error 
+}
+
+type ApiData struct{
+	W TransactionService
+	CallerChan chan float64
+}
+
+type Session interface{
+	Authenticate()*User
+	SetWorker(string)error
 }

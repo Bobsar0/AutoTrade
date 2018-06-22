@@ -9,7 +9,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-// appTemplate is a user login-aware wrapper for a html/template.
+// appTemplate is a wrapper for a html/template.
 type appTemplate struct {
 	t *template.Template
 }
@@ -17,7 +17,7 @@ type appTemplate struct {
 // NewAppTemplate applies a given file to the body of the base template
 // This produces a new version of base template to be rendered to the UI when the filename path is requested
 func NewAppTemplate(filename string) *appTemplate {
-	tmpl := template.Must(template.ParseFiles("webClient/templates/base.gohtml"))
+	baseTmpl := template.Must(template.ParseFiles("webClient/templates/base.gohtml"))
 
 	// Put the named file into a template called "body"
 	path := filepath.Join("webClient/templates", filename)
@@ -25,9 +25,9 @@ func NewAppTemplate(filename string) *appTemplate {
 	if err != nil {
 		panic(fmt.Errorf("could not read template: %v", err))
 	}
-	template.Must(tmpl.New("body").Parse(string(b)))
+	template.Must(baseTmpl.New("body").Parse(string(b)))
 
-	return &appTemplate{tmpl.Lookup("base.gohtml")}
+	return &appTemplate{baseTmpl.Lookup("base.gohtml")}
 }
 
 // Execute writes the template using the provided data, adding login and user

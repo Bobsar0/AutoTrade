@@ -17,15 +17,23 @@ type Transaction struct{
 type TransactionService interface{
 	FuncThatReturnTicker() float64 //Test function that returns ticker price
 	FuncThatReturnBalance()float64 //Test function that returns balance
-	FuncThatPlacesOrder() OrderOutput// Test function that places order
+	FuncThatPlacesOrder(OrderInput) OrderOutput// Test function that places order
 }
 
-//OrderOutput fields contains info about an order after it has been successfully placed
+//Mock inputs needed to place an order
+type OrderInput struct{
+	Symbol string
+	Quantity string
+	Ticker string
+	Operation string
+}
+
+//Mock output of a successful placing of an order
 type OrderOutput struct{
 	OrderID int
 	ClientID int
 	Symbol string
-	Ticker float64
+	Ticker string
 	Quantity float64
 	Balance float64
 }

@@ -2,8 +2,8 @@
 package app
 
 import(
-	"github.com/bobsar0/autotrade/model"
-	"github.com/bobsar0/autotrade/app/mock"
+	"github.com/bobsar0/AutoTrade/model"
+	"github.com/bobsar0/AutoTrade/app/mock"
 	"strings"
 )
 //Session carries the state parameters of a particular user

@@ -1,0 +1,32 @@
+<h3>Please fill in the following fields to place an order:</h3>
+    
+    <form action="/placeorder" method="post">
+        <div>
+            <label for="symbol">Symbol:</label>
+            <input type="text" name="symbol">
+        </div>
+        <div>
+            <label for="quantity">Quantity:</label>
+            <input type="number" name="quantity">
+        </div>
+        <div>
+            <label for="price">TickerPrice:</label>
+            <input type="text" name="price">
+        </div>
+
+        <fieldset>
+            <legend>Select Operation to Perform</legend>
+                <input type="radio" name="operation" checked/>
+                <label for="buy">Buy</label><br>
+                
+                <input type="radio" name="operation"/>
+                <label for="sell">Sell</label>
+                </div>          
+        </fieldset>
+            
+        <div>
+            <button type="submit">Place Order</button>
+        </div>     
+    </form> 
+
+    

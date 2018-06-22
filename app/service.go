@@ -1,12 +1,13 @@
 package app
 
 import(
-	"github.com/bobsar0/autotrade/model"
+	"github.com/bobsar0/AutoTrade/model"
 )
 
 type apiData struct{
 	w model.TransactionService
 	callerChan chan interface{}
+	orderInput model.OrderInput
 }
 
 //PASSING CHANNEL-OVER-CHANNEL IMPLEMENTATION
@@ -41,7 +42,7 @@ func PlaceOrder(gtc chan apiData){
 	for{
 		select{
 		case aD := <- gtc: //if tickerChan receives a chan of float64 (gtc) from the getTicker() func caller
-			order = aD.w.FuncThatPlacesOrder() //Call the func to places order from the trading site (Using a test function for now)
+			order = aD.w.FuncThatPlacesOrder(aD.orderInput) //Call the func to places order from the trading site (Using a test function for now)
 			aD.callerChan <- order //Send the order output back to the caller function(handler) via the placeOrderChan
 		}
 	}

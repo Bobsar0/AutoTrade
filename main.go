@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
-	"github.com/bobsar0/autotrade/app"
+	"github.com/bobsar0/AutoTrade/app"
 )
 
 //Program starts here

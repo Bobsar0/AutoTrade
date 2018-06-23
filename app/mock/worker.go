@@ -2,12 +2,11 @@ package mock
 
 import(
 	"github.com/chidi150c/autotrade/model"
-	"log"
+	//"log"
 	//"github.com/pkg/errors"
 )
 
 type Worker struct{
-	Sess model.Session
 	AddOrUpdateDbChan chan model.DbData
 	GetDbChan chan model.DbData
 }
@@ -31,10 +30,6 @@ func(w *Worker)FuncThatReturnBalance()float64{
 }
 
 func(w *Worker)AddTransaction(ts model.Transaction) (model.TransactionID, error){
-	if user := w.Sess.Authenticate(); user.Username != "Chidi" {
-		log.Println("Wrong Name")
-		return "", model.ErrUnauthorized
-	}
 	cChan := make(chan model.DbResp)
 	w.AddOrUpdateDbChan <-model.DbData{Transaction: ts, CallerChan: cChan}
 	res := <-cChan
@@ -42,10 +37,6 @@ func(w *Worker)AddTransaction(ts model.Transaction) (model.TransactionID, error)
 }
 
 func(w *Worker)GetTransaction(id model.TransactionID) (model.Transaction, error){
-	if user := w.Sess.Authenticate(); user.Username != "Chidi" {
-		log.Println("Wrong Name")
-		return model.Transaction{}, model.ErrUnauthorized
-	}
 	cChan := make(chan model.DbResp)
 	w.GetDbChan <-model.DbData{TransID: id, CallerChan: cChan}
 	res := <-cChan

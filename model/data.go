@@ -9,6 +9,7 @@ type Transaction struct{
 	tYPE  string
 	Operation string
 	Token string
+	Trade bool
 }
 
 type TransactionService interface{
@@ -52,9 +53,4 @@ type DbResp struct{
 type ApiData struct{
 	W TransactionService
 	CallerChan chan float64
-}
-
-type Session interface{
-	Authenticate()*User
-	SetWorker(string)error
 }

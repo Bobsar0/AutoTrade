@@ -34,12 +34,14 @@ func GetBalance(gtc chan apiData ){
 	}
 }
 
-func DBService(AddOrUpdateDbChan, GetDbChan, DeleteDbChan chan model.DbData){
+func DBService(AddOrUpdateDbChan, GetDbChan, DeleteDbChan chan model.DbData, uuIDChan chan string){
 	db := make(map[model.TransactionID]model.Transaction)
 	for{
 		select{
 		case tdb := <-AddOrUpdateDbChan: //Create
+			tdb.TransID = model.TransactionID(<-uuIDChan)
 			db[tdb.TransID] = tdb.Transaction
+			tdb.CallerChan <- model.DbResp{TransID: tdb.TransID }
 		case tdb := <-GetDbChan: //Read
 			tdb.CallerChan <-model.DbResp{tdb.TransID, db[tdb.TransID], nil}
 		case tdb := <-DeleteDbChan: //Delete

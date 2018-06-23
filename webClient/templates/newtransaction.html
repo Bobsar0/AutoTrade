@@ -1,0 +1,23 @@
+<form method="POST">
+    <label for="orderAmount">Order</label>
+    <input type="text" id="orderAmount" name="order">
+    <br>
+    <label for="Price">Price</label>
+    <input type="text" id="Price" name="price">
+    <br>
+    <label for="Price">Operation</label>
+    <input type="text" id="Price" name="operation">
+    <br>
+    <label for="trading">Start Auto Trading</label>
+    <input type="checkbox" id="trading" name="trade">
+    <br>
+    <input type="submit">
+</form>
+
+<br>
+<h1>NEW TRANSACTION</h1>
+<h1>ID: {{.ID}}</h1>
+<h1>Order Quantity: {{.Order}}</h1>
+<h1>Price Amount: {{.Price}}</h1>
+<h1>Oparetion: {{.Operation}}</h1>
+<h1>Start Auto Trading: {{.Trade}}</h1>

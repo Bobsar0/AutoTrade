@@ -13,6 +13,7 @@ type Session struct{
 	GetBalanceChan chan apiData
 	AddOrUpdateDbChan chan model.DbData 
 	GetDbChan chan model.DbData
+	DeleteDbChan chan model.DbData
 }
 
 //NewSession returns a new instance of *Session 
@@ -22,16 +23,11 @@ func NewSession () *Session{
 		GetBalanceChan: make(chan apiData),
 		AddOrUpdateDbChan: make(chan model.DbData),
 		GetDbChan: make(chan model.DbData),
+		DeleteDbChan: make(chan model.DbData),
 	}
 }
 
-var _ model.Session = &Session{}
-
-func (s *Session)Authenticate()*model.User{
-	return &model.User{
-		Username: "Chidi",
-	}
-}
+//var _ model.Session = &Session{}
 
 func (s *Session)SetWorker(host string)error{
 	if s == nil {
@@ -39,7 +35,7 @@ func (s *Session)SetWorker(host string)error{
 	}
 	if strings.Contains(host, "mock") {
 		wkr := mock.NewWorker()
-		wkr.Sess = s
+		//wkr.Sess = s
 		//wkr.GetTickerChan = s.GetTickerChan
 		//wkr.GetBalanceChan = s.GetBalanceChan
 		wkr.AddOrUpdateDbChan = s.AddOrUpdateDbChan

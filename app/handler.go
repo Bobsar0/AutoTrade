@@ -2,11 +2,11 @@
 package app
 
 import (
+	"log"
 	"github.com/go-chi/chi" //Using chi mux/router
 	"net/http"
 	"github.com/bobsar0/AutoTrade/webClient"
 	"github.com/bobsar0/AutoTrade/model"
-	"log"
 )
 
 
@@ -27,8 +27,8 @@ type AppHandler struct{
 }
 
 //NewAppHandler returns a new instance of *AppHandler
-func NewAppHandler (s *Session) *AppHandler{
-	h := &AppHandler{
+func NewAppHandler (s *Session) AppHandler{
+	h := AppHandler{
 		mux: chi.NewRouter(),
 		session: s,
 	}
@@ -43,7 +43,7 @@ func NewAppHandler (s *Session) *AppHandler{
 
 
 //AppHandler implements ServeHTTP method making it a Handler
-func (h *AppHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h AppHandler)ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h.mux.ServeHTTP(w, r)
 }
 
@@ -61,7 +61,7 @@ func (h *AppHandler)getTickerHandler(w http.ResponseWriter, r *http.Request){
 	tickerChan := make(chan interface{}) //tickerChan represents a channel that returns the ticker price
 	h.session.GetTickerChan <- apiData{h.session.worker, tickerChan, OrderFormInput} //Send the content(ticker price) in tickerChan to retrieved from GetTicker(chan apiData) to user session
 	ticker := <- tickerChan //ticker receives the ticker price via tickerChan
-	if err := tickerTmpl.Execute(w, r, ticker); err!=nil{ //Execute template passing in 'balance' as data to the template
+	if err := tickerTmpl.Execute(w, r, ticker); err!=nil{ //Execute template passing in 'ticker' as data to the template
 		log.Fatalln(err)
 	}
 }
@@ -103,6 +103,6 @@ func (h *AppHandler)placeOrderHandler(w http.ResponseWriter, r *http.Request){
 		if err := placeorderTmpl.Execute(w, r, orderOutput); err!=nil{
 			log.Fatalln(err)
 		}
-	}
 	return 
+	}
 }

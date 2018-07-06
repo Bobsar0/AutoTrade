@@ -8,6 +8,7 @@ type apiData struct{
 	w model.TransactionService
 	callerChan chan interface{}
 	orderInput model.OrderInput
+	signupInput *model.User
 }
 
 //PASSING CHANNEL-OVER-CHANNEL IMPLEMENTATION
@@ -47,6 +48,7 @@ func PlaceOrder(gtc chan apiData){
 		}
 	}
 }
+
 
 func DBService(AddOrUpdateDbChan, GetDbChan, DeleteDbChan chan model.DbData){
 	db := make(map[model.TransactionID]model.Transaction)

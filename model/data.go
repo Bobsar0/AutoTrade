@@ -47,6 +47,7 @@ type UserID string
 type User struct{
 	ID UserID
 	Username string
+	Email	string
 	Password string
 	PublicKey string
 	Secret string

@@ -3,11 +3,14 @@ package mock
 import(
 	"github.com/bobsar0/AutoTrade/model"
 	"strconv"
+	"log"
 )
 
 //Worker provides Transaction services 
 type Worker struct{
-	
+	Sess model.Session
+	AddOrUpdateDbChan chan model.DbData
+	GetDbChan chan model.DbData
 }
 //Spins out a new Worker
 func NewWorker() *Worker{
@@ -41,4 +44,25 @@ func(w *Worker)FuncThatPlacesOrder(in model.OrderInput) model.OrderOutput{
 		Quantity: quant,
 		Balance: 0.02661173,
 	}
+}
+func(w *Worker)AddTransaction(ts model.Transaction) (model.TransactionID, error){
+	if user := w.Sess.Authenticate(); user.Username != "Steve" {
+		log.Println("Wrong Username")
+		return "", model.ErrUnauthorized
+	}
+	cChan := make(chan model.DbResp)
+	w.AddOrUpdateDbChan <-model.DbData{Transaction: ts, CallerChan: cChan}
+	res := <-cChan
+	return res.TransID, res.Err
+}
+
+func(w *Worker)GetTransaction(id model.TransactionID) (model.Transaction, error){
+	if user := w.Sess.Authenticate(); user.Username != "Chidi" {
+		log.Println("Wrong Name")
+		return model.Transaction{}, model.ErrUnauthorized
+	}
+	cChan := make(chan model.DbResp)
+	w.GetDbChan <-model.DbData{TransID: id, CallerChan: cChan}
+	res := <-cChan
+	return res.Transaction, res.Err
 }

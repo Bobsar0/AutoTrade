@@ -6,10 +6,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
+	"github.com/bobsar0/AutoTrade/model"
 	"github.com/pkg/errors"
 )
 
-// appTemplate is a wrapper for a html/template.
+// appTemplate is a user login-aware wrapper for a html/template.
 type appTemplate struct {
 	t *template.Template
 }
@@ -35,12 +36,23 @@ func NewAppTemplate(filename string) *appTemplate {
 func (tmpl *appTemplate) Execute(w http.ResponseWriter, r *http.Request, data interface{}) error {
 	d := struct {
 		Data        interface{}
+		AuthEnabled bool
+		Profile     *model.User
+		LoginURL    string
+		LogoutURL   string
 	}{
 		Data:        data,
+		//AuthEnabled: app.OAuthConfig != nil,
+		LoginURL:    "/login?redirect=" + r.URL.RequestURI(),
+		LogoutURL:   "/logout?redirect=" + r.URL.RequestURI(),
 	}
 
+	if d.AuthEnabled {
+		// Ignore any errors.
+		//d.Profile = profileFromSession(r)
+	}
 	if err := tmpl.t.Execute(w, d); err != nil {
-		return errors.Wrapf(err, "could not write template: %v", err)
+		return errors.Wrapf(err, "could not write template: %+v", err)
 	}
 	return nil
 }

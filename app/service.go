@@ -8,6 +8,7 @@ type apiData struct{
 	w model.TransactionService
 	callerChan chan interface{}
 	orderInput model.OrderInput
+	signupInput *model.User
 }
 
 //PASSING CHANNEL-OVER-CHANNEL IMPLEMENTATION
@@ -44,6 +45,21 @@ func PlaceOrder(gtc chan apiData){
 		case aD := <- gtc: //if tickerChan receives a chan of float64 (gtc) from the getTicker() func caller
 			order = aD.w.FuncThatPlacesOrder(aD.orderInput) //Call the func to places order from the trading site (Using a test function for now)
 			aD.callerChan <- order //Send the order output back to the caller function(handler) via the placeOrderChan
+		}
+	}
+}
+
+
+func DBService(AddOrUpdateDbChan, GetDbChan, DeleteDbChan chan model.DbData){
+	db := make(map[model.TransactionID]model.Transaction)
+	for{
+		select{
+		case tdb := <-AddOrUpdateDbChan: //Create
+			db[tdb.TransID] = tdb.Transaction
+		case tdb := <-GetDbChan: //Read
+			tdb.CallerChan <-model.DbResp{tdb.TransID, db[tdb.TransID], nil}
+		case tdb := <-DeleteDbChan: //Delete
+			delete(db, tdb.TransID)
 		}
 	}
 }

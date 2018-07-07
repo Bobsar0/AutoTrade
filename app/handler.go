@@ -2,7 +2,9 @@
 package app
 
 import (
+	"fmt"
 	"log"
+	"github.com/gorilla/schema"
 	"github.com/go-chi/chi" //Using chi mux/router
 	"net/http"
 	"github.com/bobsar0/AutoTrade/webClient"
@@ -39,6 +41,7 @@ func NewAppHandler (s *Session) AppHandler{
 	h.mux.Post("/placeorder", h.placeOrderHandler) // placeOrderHandler handles incoming requests from the path '/placeorder' and presents the output to client/user
 
 	h.mux.Get("/signup", h.signupHandler) // signupHandler handles incoming requests from the trailing path '/signup' and presents the signup form to client/user 
+	h.mux.Post("/signup", h.signupHandler) // signupHandler handles incoming requests from the trailing path '/signup' and presents the signup form to client/user 
 
 	h.mux.Get("/", h.indexHandler)
 	return h
@@ -110,31 +113,27 @@ func (h *AppHandler)placeOrderHandler(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-
 func (h *AppHandler)signupHandler(w http.ResponseWriter, r *http.Request){
 	var host = "mock"
 	h.session.SetWorker(host) //Sets the 'mock' worker for the user (app/mock/worker). Automatically sets it to other methods for the user as well since the receiver is a pointer
 	
 	log.Println("signupHandler method:", r.Method) //get request method
 	
-	//if r.Method == "GET" { //if user requests for form
+	if r.Method == "GET" { //if user requests for form
 		if err := signupTmpl.Execute(w,r,nil); err!=nil{
 			log.Fatalln(err)
 		}
-	//}
-	return
-	//  else { //if user submits form
-	// 	signupChan := make(chan interface{}) //orderChan represents a channel that returns the output of a placed order
-	// 	formInput := model.SignupInput{
-	// 		Username: r.FormValue("username"),
-	// 		Email: r.FormValue("email"),
-	// 		Password: r.FormValue("password"),
-	// 	}
-	// 	h.session.SignUpChan <- apiData{h.session.worker, signupChan, nil ,formInput} //Send the content(order) in placeorderChan to session
-	// 	formOutput := <- signupChan //orderOutput receives the output of PlaceOrder() via placeOrderChan
-	// 	if err := placeorderTmpl.Execute(w, r, formOutput); err!=nil{
-	// 		log.Fatalln(err)
-	// 	}
-	// return 
-	// }
+	} else { //if user submits form
+		if err := r.ParseForm(); err != nil {
+			panic(err)
+		}
+		dec := schema.NewDecoder()
+		var form model.User
+		if err := dec.Decode(&form, r.PostForm); err != nil {
+			panic(err)
+		}
+
+		fmt.Fprintln(w, form)
+	return 
+	}
 }

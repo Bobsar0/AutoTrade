@@ -46,12 +46,16 @@ type UserID string
 //Information about a specific user
 type User struct{
 	ID UserID
-	Username string
-	Email	string
-	Password string
+	Username string `schema:"username"`
+	Name string `schema:"name"`
+	Email	string `schema:"email"`
+	Password string `schema:"password"`
 	PublicKey string
 	Secret string
 	Token string
+	createdAt string
+	updatedAt string
+	deletedAt string
 }
 
 //UserService contains methods that interact with the database
